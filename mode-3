@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Quiz Application with Timer</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    text-align: center;
+    color: white;
+}
+
+.container{
+    width: 60%;
+    margin: auto;
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+.question{
+    text-align: left;
+    margin: 15px 0;
+}
+
+button{
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #333;
+    color: white;
+}
+
+button:hover{
+    background: #555;
+}
+
+#quizContainer{
+    display: none;
+}
+
+#timer{
+    font-size: 22px;
+    color: red;
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Interactive Quiz Application</h1>
+<p><i>Let's Solve Quiz!!</i></p>
+
+<div id="startScreen">
+
+    <h2>Select Quiz Category</h2>
+
+    <button onclick="startQuiz('general')">
+        General Knowledge
+    </button>
+
+    <button onclick="startQuiz('math')">
+        Math
+    </button>
+
+    <button onclick="startQuiz('science')">
+        Science
+    </button>
+
+</div>
+
+
+<div class="container" id="quizContainer">
+
+    <h2 id="quizTitle"></h2>
+
+    
+    <h3>Time Left: <span id="timer">30</span> Seconds</h3>
+
+    <form id="quizForm"></form>
+
+    <button type="button" onclick="checkAnswers()">
+        Submit Quiz
+    </button>
+
+    <h3 id="result"></h3>
+
+</div>
+
+<script>
+
+
+let quizzes = {
+
+    general: [
+
+        {
+            q: "What is capital of India?",
+            options: ["Mumbai", "Delhi", "Kolkata", "Chennai"],
+            answer: "Delhi"
+        },
+
+        {
+            q: "Which colour is the sky?",
+            options: ["Green", "Blue", "Red", "Purple"],
+            answer: "Blue"
+        }
+    ],
+
+    math: [
+
+        {
+            q: "5 + 3 = ?",
+            options: ["6", "7", "8", "9"],
+            answer: "8"
+        },
+
+        {
+            q: "10 - 4 = ?",
+            options: ["5", "6", "7", "8"],
+            answer: "6"
+        }
+    ],
+
+    science: [
+
+        {
+            q: "Water formula?",
+            options: ["CO2", "H2O", "O2", "NaCl"],
+            answer: "H2O"
+        },
+
+        {
+            q: "Sun is a?",
+            options: ["Planet", "Star", "Moon", "Asteroid"],
+            answer: "Star"
+        }
+    ]
+};
+
+
+let currentQuiz = [];
+
+let timeLeft = 30;
+
+let timer;
+
+
+
+function startQuiz(type){
+
+    
+    document.getElementById("startScreen").style.display = "none";
+
+    
+    document.getElementById("quizContainer").style.display = "block";
+
+    
+    currentQuiz = quizzes[type];
+
+    
+    document.getElementById("quizTitle").innerText =
+        type.toUpperCase() + " QUIZ";
+
+    
+    let form = document.getElementById("quizForm");
+
+    
+    form.innerHTML = "";
+
+    
+    currentQuiz.forEach((item, index) => {
+
+        let qHTML = `
+        <div class="question">
+
+        <p><b>${index + 1}. ${item.q}</b></p>
+        `;
+
+        
+        item.options.forEach(option => {
+
+            qHTML += `
+            <input type="radio"
+                   name="q${index}"
+                   value="${option}">
+                   ${option}<br>
+            `;
+        });
+
+        qHTML += "</div>";
+
+        
+        form.innerHTML += qHTML;
+    });
+
+    
+    startTimer();
+}
+
+
+
+function startTimer(){
+
+    timeLeft = 30;
+
+    document.getElementById("timer").innerText = timeLeft;
+
+    timer = setInterval(function(){
+
+        timeLeft--;
+
+        document.getElementById("timer").innerText = timeLeft;
+
+        
+        if(timeLeft <= 0){
+
+            clearInterval(timer);
+
+            alert("Time is over!");
+
+            checkAnswers();
+        }
+
+    },1000);
+}
+
+
+
+function checkAnswers(){
+
+    
+    clearInterval(timer);
+
+    let score = 0;
+
+    let form = document.forms["quizForm"];
+
+    
+    currentQuiz.forEach((item, index) => {
+
+        let options = form["q" + index];
+
+        let selected = "";
+
+        
+        for(let opt of options){
+
+            if(opt.checked){
+
+                selected = opt.value;
+            }
+        }
+
+        
+        if(selected === item.answer){
+
+            score++;
+        }
+    });
+
+    
+    document.getElementById("result").innerText =
+        "Your Score : " + score + " / " + currentQuiz.length;
+}
+
+</script>
+
+</body>
+</html>
